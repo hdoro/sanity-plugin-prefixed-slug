@@ -1,0 +1,60 @@
+{
+  "name": "sanity-plugin-better-slug",
+  "version": "1.0.0",
+  "description": "Editor friendly slug fields for your Sanity.io studio!",
+  "main": "lib/SlugInput.js",
+  "scripts": {
+    "format": "prettier --write .",
+    "clear-lib": "node clearLib.js",
+    "build": "npm run format && npm run clear-lib && tsc",
+    "dev": "tsc -w",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/hdoro/sanity-plugin-better-slug.git"
+  },
+  "keywords": [
+    "sanity.io",
+    "sanity",
+    "slug",
+    "sanity-plugin"
+  ],
+  "author": "Henrique Doro <opensource@hdoro.dev>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/speakingurl": "^13.0.2",
+    "@sanity/ui": ">= 0.33.9",
+    "@sanity/base": ">= 2.5.0",
+    "@sanity/util": ">= 2.5.0",
+    "speakingurl": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.2"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/hdoro/sanity-plugin-better-slug/issues"
+  },
+  "homepage": "https://github.com/hdoro/sanity-plugin-better-slug#readme",
+  "prettier": {
+    "semi": false,
+    "printWidth": 100,
+    "bracketSpacing": false,
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "parser": "sanipack/babel/eslint-parser",
+    "extends": [
+      "sanity",
+      "sanity/react",
+      "prettier",
+      "prettier/react"
+    ]
+  }
+}
