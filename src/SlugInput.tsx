@@ -144,7 +144,7 @@ class SlugInput extends React.Component<
                       maxWidth: '30ch',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
-                      textOverflow: 'ellipsis',
+                      overflowX:"scroll",
                       alignItems: 'center',
                       background: '#f2f2f2',
                     }}
