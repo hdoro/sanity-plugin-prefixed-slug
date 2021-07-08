@@ -141,12 +141,22 @@ class SlugInput extends React.Component<
                     radius={2}
                     flex={1}
                     style={{
-                      maxWidth: '30ch',
+                      maxWidth: 'min-content',
+                      height: '35px',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       alignItems: 'center',
-                      background: '#f2f2f2',
+                      backgroundColor: '#f1f3f6',
+                      marginRight: '-1px',
+                      paddingRight: '0.75rem',
+                      paddingLeft: '0.75rem',
+                      color: '--card-code-fg-color',
+                      fontSize: '1rem',
+                      lineHeight: '1.3125',
+                      borderTopRightRadius: '0',
+                      borderBottomRightRadius: '0',
+                      boxSizing: 'border-box',
                     }}
                     display="flex"
                   >{`${this.state.basePath}/`}</Card>
