@@ -141,7 +141,7 @@ class SlugInput extends React.Component<
                     radius={2}
                     flex={1}
                     style={{
-                      maxWidth: '30ch',
+                      minWidth: `${this.props.type.options?.minWidth ?? 30}ch`,
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
