@@ -23,8 +23,8 @@
   "author": "Henrique Doro <opensource@hdoro.dev>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@sanity/ui": ">= 0.33.9",
     "@sanity/base": ">= 2.5.0",
+    "@sanity/ui": ">= 0.33.9",
     "@sanity/util": ">= 2.5.0",
     "speakingurl": "^14.0.1"
   },
@@ -32,6 +32,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/speakingurl": "^13.0.3",
+    "@types/styled-components": "^5.1.25",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   },
