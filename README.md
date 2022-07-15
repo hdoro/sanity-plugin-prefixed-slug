@@ -1,48 +1,40 @@
-# sanity-plugin-better-slug
+# sanity-plugin-prefixed-slug
 
-Editor friendly slug fields for your Sanity.io studio!
+Editor friendly slug fields for your Sanity.io studio. Prefixed URLs and auto-slugifying values.
 
-![Screenshot of the plugin in action](src/screenshot.png)
+![Screenshot of the plugin in action](src/demo.gif)
+
+💡 This plugin used to be called `sanity-plugin-better-slug`. As that was pretentious, egoic and unclear, I've made the switch to `prefixed-slug`.
 
 ## Installation
 
 Start by enabling it in your studio:
 
-```
-sanity install better-slug
+```bash
+yarn add sanity-plugin-prefixed-slug
+# or npm
+npm i sanity-plugin-prefixed-slug
 ```
 
-Then, you can either use the type `better-slug` for your fields to carry that over, or just use the custom input component directly in your `slug` field:
+Then, use the custom input component in your `slug` field(s):
 
 ```js
-import SlugInput from 'sanity-plugin-better-slug'
+import SlugInput from 'sanity-plugin-prefixed-slug'
 
 export default {
-  title: 'Testing Slugs',
   name: 'testing-slugs',
   type: 'document',
   fields: [
     {
-      // RECOMMENDED: using Sanity's default _type: 'slug' w/ input component
       name: 'slug_regular_custom_input',
       type: 'slug',
       inputComponent: SlugInput,
       options: {
         source: 'title',
-        basePath: 'https://site.url',
+        urlPrefix: 'https://site.url',
         // Use isUnique/maxLength just like you would w/ the regular slug field
         isUnique: MyCustomIsUniqueFunction,
         maxLength: 30,
-      },
-    },
-    {
-      // EASIER BUT NOT RECOMMENDED: using better-slug type
-      // The issue with it is that you become dependant on this plugin forever.
-      // Also, the isUnique behavior won't work as intended.
-      name: 'slug_custom_type',
-      type: 'better-slug',
-      options: {
-        basePath: 'https://site.url',
       },
     },
     {
@@ -51,9 +43,9 @@ export default {
       type: 'slug',
       inputComponent: SlugInput,
       options: {
-        basePath: 'https://site.url',
+        urlPrefix: 'https://site.url',
         slugify: (slugString) => slugString.toLowerCase(),
-        // You could even avoid slugifying entirely by returning the full value:
+        // You can also avoid slugifying entirely by returning the full value:
         slugify: (slugString) => slugString,
       },
     },
@@ -63,9 +55,9 @@ export default {
       type: 'slug',
       inputComponent: SlugInput,
       options: {
-        basePath: (document) => `https://site.url/${document.lang}`,
+        urlPrefix: (document) => `https://site.url/${document.lang}`,
         // It could even be a promise!
-        basePath: async (document) => {
+        urlPrefix: async (document) => {
           const subPath = await getDocumentSubPath(document) // ficticious method
           return `https://site.url/${subPath}`
         },
@@ -75,7 +67,10 @@ export default {
 }
 ```
 
+Upgrading from sanity-plugin-better-slug? Rename your `options.basePath` to `options.urlPrefix`.
+
 ## Roadmap
 
+- [ ] Adapt to Sanity v3
 - [ ] get merged into `@sanity/base`
   - That's right! The goal of this plugin is to become obsolete. It'd be much better if the official type included in Sanity had this behavior from the get-go. Better for users and the platform :)
