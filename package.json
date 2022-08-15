@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-prefixed-slug",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Editor friendly slug fields for your Sanity.io studio",
   "main": "lib/SlugInput.js",
   "scripts": {
