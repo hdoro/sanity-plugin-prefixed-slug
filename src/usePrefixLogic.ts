@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import speakingurl from 'speakingurl'
 
 const createPatchFrom = (value: any) =>
-  PatchEvent.from(value === '' ? unset() : set(value))
+  PatchEvent.from(value ? set(value) : unset())
 
 export function usePrefixLogic(props: any) {
   const { type, document } = props
@@ -34,11 +34,16 @@ export function usePrefixLogic(props: any) {
   }, [])
 
   function updateValue(strValue: string) {
-    const patchValue = {
-      _type: props.type?.name || 'slug',
-      current: strValue,
-    }
-    props.onChange(createPatchFrom(patchValue))
+    const patch = createPatchFrom(
+      strValue
+        ? {
+            _type: props.type?.name || 'slug',
+            current: strValue,
+          }
+        : undefined,
+    )
+
+    props.onChange(patch)
   }
 
   async function generateSlug() {
