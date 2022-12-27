@@ -1,43 +1,50 @@
 import * as PathUtils from '@sanity/util/paths'
-import PatchEvent, { set, unset } from 'part:@sanity/form-builder/patch-event'
 import React, { useEffect, useState } from 'react'
+import { PatchEvent, SanityDocument, set, SlugInputProps, unset, useFormValue } from 'sanity'
 import speakingurl from 'speakingurl'
+import { useSlugContext } from './useSlugContext'
 
-const createPatchFrom = (value: any) =>
-  PatchEvent.from(value ? set(value) : unset())
+const createPatchFrom = (value: any) => PatchEvent.from(value ? set(value) : unset())
 
-export function usePrefixLogic(props: any) {
-  const { type, document } = props
+// eslint-disable-next-line
+export function usePrefixLogic(props: SlugInputProps) {
+  const { schemaType } = props
+  const sourceContext = useSlugContext()
+  const document = useFormValue([]) as SanityDocument | undefined
   const [urlPrefix, setUrlPrefix] = useState<string | undefined>()
-  const options = type.options as {
+  const options = schemaType.options as SlugInputProps['schemaType']['options'] & {
     urlPrefix?: string | Function | Promise<unknown>
   }
 
-  useEffect(() => {
-    const getUrlPrefix = async (): Promise<string | undefined> => {
-      if (typeof options?.urlPrefix === 'string') {
-        return options.urlPrefix
-      }
-      if (typeof options?.urlPrefix === 'function') {
-        try {
-          const value = await Promise.resolve(options.urlPrefix(document))
-          return value
-        } catch (error) {
-          console.error(error)
-          return undefined
+  useEffect(
+    () => {
+      const getUrlPrefix = async (): Promise<string | undefined> => {
+        if (typeof options?.urlPrefix === 'string') {
+          return options.urlPrefix
         }
+        if (typeof options?.urlPrefix === 'function') {
+          try {
+            const value = await Promise.resolve(options.urlPrefix(document))
+            return value
+          } catch (error) {
+            console.error(error)
+            return undefined
+          }
+        }
+        return undefined
       }
-      return undefined
-    }
 
-    getUrlPrefix().then(setUrlPrefix)
-  }, [])
+      getUrlPrefix().then(setUrlPrefix)
+    },
+    // eslint-disable-next-line
+    [],
+  )
 
   function updateValue(strValue: string) {
     const patch = createPatchFrom(
       strValue
         ? {
-            _type: props.type?.name || 'slug',
+            _type: schemaType?.name || 'slug',
             current: strValue,
           }
         : undefined,
@@ -47,15 +54,16 @@ export function usePrefixLogic(props: any) {
   }
 
   async function generateSlug() {
-    const parentPath = props.getValuePath().slice(0, -1)
-    const parent = PathUtils.get(document, parentPath)
+    if (!document) return
 
+    const parentPath = props.path.slice(0, -1)
+    const parent = PathUtils.get(document, parentPath) as any
     const sourceValue = await Promise.resolve(
-      typeof type.options?.source === 'function'
-        ? (type.options?.source(document, { parentPath, parent }) as
+      typeof options?.source === 'function'
+        ? (options?.source(document, { parentPath, parent, ...sourceContext }) as
             | string
             | undefined)
-        : (PathUtils.get(document, type.options?.source) as string | undefined),
+        : (PathUtils.get(document, options?.source || []) as string | undefined),
     )
     formatSlug(sourceValue)
   }
@@ -63,15 +71,13 @@ export function usePrefixLogic(props: any) {
   /**
    * Avoids trailing slashes, double slashes, spaces, special characters and uppercase letters
    */
-  function formatSlug(
-    input?: React.FocusEventHandler<HTMLInputElement> | string,
-  ) {
+  async function formatSlug(input?: React.FocusEventHandler<HTMLInputElement> | string) {
     const customValue = typeof input === 'string' ? input : undefined
     let finalSlug = customValue || props.value?.current || ''
     // Option that can be passed to this input component to format values on input
-    const customSlugify = props.type.options?.slugify
+    const customSlugify = schemaType.options?.slugify
     if (customSlugify) {
-      finalSlug = customSlugify(finalSlug || '')
+      finalSlug = await Promise.resolve(customSlugify(finalSlug || '', schemaType, {} as any))
     } else {
       // Removing special characters, spaces, uppercase letters, etc.
       finalSlug = finalSlug
