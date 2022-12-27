@@ -13,7 +13,7 @@ const UrlPrefix = styled(Card)`
 
   pre,
   code {
-    overflow-x: hidden;
+    overflow: hidden;
     white-space: nowrap;
     max-width: 30ch;
     text-overflow: ellipsis;
