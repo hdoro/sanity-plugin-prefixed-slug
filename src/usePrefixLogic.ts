@@ -13,7 +13,7 @@ export function usePrefixLogic(props: SlugInputProps) {
   const document = useFormValue([]) as SanityDocument | undefined
   const options = schemaType.options as SlugInputProps['schemaType']['options'] & {
     urlPrefix?: string | Function | Promise<unknown>
-    storeFullPath?: boolean
+    storeFullUrl?: boolean
   }
 
   const [urlPrefix, setUrlPrefix] = useState<string | undefined>()
@@ -60,9 +60,9 @@ export function usePrefixLogic(props: SlugInputProps) {
             _type: schemaType?.name || 'slug',
             current: strValue,
           },
-          finalPrefix && options.storeFullPath === true
+          finalPrefix && options.storeFullUrl === true
             ? {
-                fullPath: `${finalPrefix}${strValue}`,
+                fullUrl: `${finalPrefix}${strValue}`,
               }
             : {},
         )
