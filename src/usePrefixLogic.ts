@@ -1,5 +1,5 @@
 import * as PathUtils from '@sanity/util/paths'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { PatchEvent, SanityDocument, set, SlugInputProps, unset, useFormValue } from 'sanity'
 import speakingurl from 'speakingurl'
 import { useSlugContext } from './useSlugContext'
@@ -16,29 +16,35 @@ export function usePrefixLogic(props: SlugInputProps) {
     urlPrefix?: string | Function | Promise<unknown>
   }
 
-  useEffect(
-    () => {
-      const getUrlPrefix = async (): Promise<string | undefined> => {
-        if (typeof options?.urlPrefix === 'string') {
-          return options.urlPrefix
-        }
-        if (typeof options?.urlPrefix === 'function') {
-          try {
-            const value = await Promise.resolve(options.urlPrefix(document))
-            return value
-          } catch (error) {
-            console.error(error)
-            return undefined
-          }
-        }
-        return undefined
+  const getUrlPrefix = useCallback(
+    async (doc: SanityDocument | undefined) => {
+      if (!doc) return
+
+      if (typeof options?.urlPrefix === 'string') {
+        setUrlPrefix(options.urlPrefix)
+        return
       }
 
-      getUrlPrefix().then(setUrlPrefix)
+      if (typeof options?.urlPrefix === 'function') {
+        try {
+          const value = await Promise.resolve(options.urlPrefix(doc))
+          setUrlPrefix(value)
+          return
+        } catch (error) {
+          console.error(`[prefixed-slug] Couldn't generate URL prefix: `, error)
+        }
+      }
+
+      setUrlPrefix(undefined)
     },
     // eslint-disable-next-line
-    [],
+    [setUrlPrefix, options.urlPrefix],
   )
+
+  // Re-create the prefix whenever the document changes
+  useEffect(() => {
+    getUrlPrefix(document)
+  }, [document, getUrlPrefix])
 
   function updateValue(strValue: string) {
     const patch = createPatchFrom(
