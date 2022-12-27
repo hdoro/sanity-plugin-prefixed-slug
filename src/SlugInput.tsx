@@ -35,12 +35,7 @@ const UrlPrefix = styled(Card)`
  */
 const PrefixedSlugInput = (props: SlugInputProps) => {
   const { value, schemaType } = props
-  const { urlPrefix, generateSlug, updateValue, formatSlug } = usePrefixLogic(props)
-
-  const finalPrefix = `${urlPrefix}${
-    // Add a slash if the prefix doesn't end with one and doesn't contain a hash or a query string
-    !urlPrefix?.endsWith('/') && !urlPrefix?.includes('#') && !urlPrefix?.includes('?') ? '/' : ''
-  }`
+  const { prefix, generateSlug, updateValue, formatSlug } = usePrefixLogic(props)
 
   const onChange = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => updateValue(event.currentTarget.value),
@@ -58,16 +53,16 @@ const PrefixedSlugInput = (props: SlugInputProps) => {
 
   return (
     <Flex style={{ gap: '0.5em' }} align="center">
-      {urlPrefix && (
+      {prefix && (
         <Tooltip
           content={
             <Box padding={2}>
-              <Text>{finalPrefix}</Text>
+              <Text>{prefix}</Text>
             </Box>
           }
         >
           <UrlPrefix data-no-generate={!schemaType.options?.source}>
-            <Code size={1}>{finalPrefix}</Code>
+            <Code size={1}>{prefix}</Code>
           </UrlPrefix>
         </Tooltip>
       )}

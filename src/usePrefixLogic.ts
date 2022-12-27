@@ -11,10 +11,17 @@ export function usePrefixLogic(props: SlugInputProps) {
   const { schemaType } = props
   const sourceContext = useSlugContext()
   const document = useFormValue([]) as SanityDocument | undefined
-  const [urlPrefix, setUrlPrefix] = useState<string | undefined>()
   const options = schemaType.options as SlugInputProps['schemaType']['options'] & {
     urlPrefix?: string | Function | Promise<unknown>
+    storeFullPath?: boolean
   }
+
+  const [urlPrefix, setUrlPrefix] = useState<string | undefined>()
+
+  const finalPrefix = `${urlPrefix}${
+    // Add a slash if the prefix doesn't end with one and doesn't contain a hash or a query string
+    !urlPrefix?.endsWith('/') && !urlPrefix?.includes('#') && !urlPrefix?.includes('?') ? '/' : ''
+  }`
 
   const getUrlPrefix = useCallback(
     async (doc: SanityDocument | undefined) => {
@@ -47,16 +54,21 @@ export function usePrefixLogic(props: SlugInputProps) {
   }, [document, getUrlPrefix])
 
   function updateValue(strValue: string) {
-    const patch = createPatchFrom(
-      strValue
-        ? {
+    const newValue = strValue
+      ? Object.assign(
+          {
             _type: schemaType?.name || 'slug',
             current: strValue,
-          }
-        : undefined,
-    )
+          },
+          finalPrefix && options.storeFullPath === true
+            ? {
+                fullPath: `${finalPrefix}${strValue}`,
+              }
+            : {},
+        )
+      : undefined
 
-    props.onChange(patch)
+    props.onChange(createPatchFrom(newValue))
   }
 
   async function generateSlug() {
@@ -101,7 +113,7 @@ export function usePrefixLogic(props: SlugInputProps) {
   }
 
   return {
-    urlPrefix,
+    prefix: finalPrefix,
     generateSlug,
     updateValue,
     formatSlug,
