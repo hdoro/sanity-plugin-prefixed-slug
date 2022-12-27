@@ -37,7 +37,10 @@ const PrefixedSlugInput = (props: SlugInputProps) => {
   const { value, schemaType } = props
   const { urlPrefix, generateSlug, updateValue, formatSlug } = usePrefixLogic(props)
 
-  const finalPrefix = `${urlPrefix}${urlPrefix?.endsWith('/') ? '' : '/'}`
+  const finalPrefix = `${urlPrefix}${
+    // Add a slash if the prefix doesn't end with one and doesn't contain a hash or a query string
+    !urlPrefix?.endsWith('/') && !urlPrefix?.includes('#') && !urlPrefix?.includes('?') ? '/' : ''
+  }`
 
   const onChange = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => updateValue(event.currentTarget.value),
