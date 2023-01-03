@@ -34,7 +34,7 @@ export function usePrefixLogic(props: SlugInputProps) {
 
       if (typeof options?.urlPrefix === 'function') {
         try {
-          const value = await Promise.resolve(options.urlPrefix(doc))
+          const value = await Promise.resolve(options.urlPrefix(doc, sourceContext))
           setUrlPrefix(value)
           return
         } catch (error) {

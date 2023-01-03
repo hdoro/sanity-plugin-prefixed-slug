@@ -65,9 +65,9 @@ export default {
         input: SlugInput,
       },
       options: {
-        urlPrefix: (document) => `https://site.url/${document.lang}`,
+        urlPrefix: (document, context) => `https://site.url/${document.lang}`,
         // It could even be a promise! 🛑 Be careful: this will be triggered on every document change.
-        urlPrefix: async (document) => {
+        urlPrefix: async (document, context) => {
           const subPath = await getDocumentSubPath(document) // ficticious asynchronous method
           return `https://site.url/${subPath}`
         },
